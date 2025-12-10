@@ -126,6 +126,14 @@ func (this *Inspector) InspectOriginalTable() (err error) {
 	if err != nil {
 		return err
 	}
+	this.migrationContext.OriginalTableUniqueKeys = []*sql.UniqueKey{
+		{
+			Name:            "PRIMARY",
+			Columns:         *sql.ParseColumnList("id"),
+			HasNullable:     false,
+			IsAutoIncrement: true,
+		},
+	}
 	return nil
 }
 
@@ -141,6 +149,14 @@ func (this *Inspector) inspectOriginalAndGhostTables() (err error) {
 	this.migrationContext.GhostTableColumns, this.migrationContext.GhostTableVirtualColumns, this.migrationContext.GhostTableUniqueKeys, err = this.InspectTableColumnsAndUniqueKeys(this.migrationContext.GetGhostTableName())
 	if err != nil {
 		return err
+	}
+	this.migrationContext.GhostTableUniqueKeys = []*sql.UniqueKey{
+		{
+			Name:            "PRIMARY",
+			Columns:         *sql.ParseColumnList("id"),
+			HasNullable:     false,
+			IsAutoIncrement: true,
+		},
 	}
 	sharedUniqueKeys := this.getSharedUniqueKeys(this.migrationContext.OriginalTableUniqueKeys, this.migrationContext.GhostTableUniqueKeys)
 	for i, sharedUniqueKey := range sharedUniqueKeys {
